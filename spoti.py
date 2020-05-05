@@ -1,6 +1,6 @@
 from __future__ import unicode_literals
 import youtube_dl
-import eyeD3
+import eyed3
 
 class Song:
     """ Contains and controls song elements """
@@ -28,12 +28,16 @@ class Song:
         pass
 
     def edit_metadata(self):
-        pass
+        audiofile = eyed3.load('./songs/' + self.title + '.mp3')
+        audiofile.tag.artist = self.artist
+        audiofile.tag.title = self.title
+        audiofile.tag.save()
 
 
 def main():
-    blinding_lights = Song("Blinding Lights", "The Weeknd")
-    blinding_lights.download()
+    new_song = Song("Blinding Lights", "The Weeknd")
+    new_song.download()
+    new_song.edit_metadata()
 
 
 main()
