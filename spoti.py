@@ -8,7 +8,8 @@ from song import Song
 from secrets import SPOTIFY_TOKEN
 
 class Playlist:
-    def __init__(self, playlist_id):
+    def __init__(self, name, playlist_id):
+        self.name = name
         self.id = playlist_id
 
     def get_playlist(self):
@@ -35,7 +36,7 @@ class Playlist:
             cover_art = Image.open(BytesIO(cover_art_raw))
 
             # Initialize song obj and download
-            song = Song(title, artist, cover_art)
+            song = Song(title, artist, cover_art, self.name)
             song.download()
             song.edit_metadata()
 
@@ -44,8 +45,8 @@ def main():
         'Just Good Music':'37i9dQZF1DX0b1hHYQtJjp'
     }
 
-    test = Playlist(playlists['Just Good Music'])
-    test.get_playlist()
-    test.download_songs()
+    pl = Playlist('Just Good Music', playlists['Just Good Music'])
+    pl.get_playlist()
+    pl.download_songs()
 
 main()

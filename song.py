@@ -8,17 +8,18 @@ from bs4 import BeautifulSoup
 class Song:
     """ Contains and controls song elements """
 
-    def __init__(self, title, artist, cover_art):
+    def __init__(self, title, artist, cover_art, playlist):
         self.title = title
         self.artist = artist
         self.cover_art = cover_art
+        self.playlist = playlist
 
     def download(self):
         """ Download mp3 from youtube """
         self.get_URL()
         ydl_opts = {
             'format': 'bestaudio/best',
-            'outtmpl': './songs/' + self.title + '.%(ext)s',
+            'outtmpl': f'./songs/{self.playlist}/{self.title}.%(ext)s',
             'postprocessors': [{
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
@@ -48,5 +49,6 @@ class Song:
         """ Edit title, artist, and album art """
         audiofile = eyed3.load('./songs/' + self.title + '.mp3')
         audiofile.tag.artist = self.artist
+        audiofile.tag.title = self.title
         audiofile.tag.title = self.title
         audiofile.tag.save()
