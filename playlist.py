@@ -28,7 +28,7 @@ class Playlist:
 
     def download_songs(self):
         """ Download each song in the playlist """
-        for i in range(42,len(self.data.json()['items'])):
+        for i in range(len(self.data.json()['items'])):
             if i > 50:
                 break
 
