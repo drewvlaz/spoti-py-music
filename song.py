@@ -1,9 +1,7 @@
-from __future__ import unicode_literals
-
+from bs4 import BeautifulSoup
 import youtube_dl
 import eyed3
 import requests
-from bs4 import BeautifulSoup
 
 class Song:
     """ Contains and controls song elements """
@@ -16,6 +14,7 @@ class Song:
 
     def download(self):
         """ Download mp3 from youtube """
+        # Locate download url
         self.get_URL()
         ydl_opts = {
             'format': 'bestaudio/best',
@@ -27,8 +26,20 @@ class Song:
                 }]
             }
 
-        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([self.URL])
+        # Download song as mp3
+        # Weird error sometimes can't find video to download
+        successful_download = False
+        while not successful_download:
+            try:
+                with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                    ydl.download([self.URL])
+                    successful_download = True
+
+            except:
+                print("Error in downloading...Retrying")
+
+        # Automatically edit metadata
+        self.edit_metadata()
 
     def get_URL(self):
         """ Locate youtube URL based on title and artist """
@@ -39,11 +50,19 @@ class Song:
             query += word + '+'
         query += 'lyrics'
 
-        search_page = requests.get(query)
-        soup = BeautifulSoup(search_page.text, 'html.parser')
-        link = soup.find('a', {'class': 'yt-uix-sessionlink spf-link'})
+        # Occasional failure to get URL
+        successful_link = False
+        while not successful_link:
+            try:
+                search_page = requests.get(query)
+                soup = BeautifulSoup(search_page.text, 'html.parser')
+                link = soup.find('a', {'class': 'yt-uix-sessionlink spf-link'})
 
-        self.URL = 'https://www.youtube.com/' + link.get('href')
+                self.URL = 'https://www.youtube.com/' + link.get('href')
+                successful_link = True
+
+            except:
+                print("Error in getting download link...Retrying")
 
     def edit_metadata(self):
         """ Edit title, artist, and album art """
