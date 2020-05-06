@@ -2,8 +2,6 @@ from __future__ import unicode_literals
 
 import json
 import requests
-from PIL import Image
-from io import BytesIO
 from song import Song
 from secrets import SPOTIFY_TOKEN
 
@@ -32,8 +30,7 @@ class Playlist:
             # Get song data
             title = self.data.json()['items'][i]['track']['name']
             artist = self.data.json()['items'][i]['track']['album']['artists'][0]['name']
-            cover_art_raw = requests.get(self.data.json()['items'][0]['track']['album']['images'][0]['url']).content
-            cover_art = Image.open(BytesIO(cover_art_raw))
+            cover_art = requests.get(self.data.json()['items'][0]['track']['album']['images'][0]['url']).content
 
             # Initialize song obj and download
             song = Song(title, artist, cover_art, self.name)

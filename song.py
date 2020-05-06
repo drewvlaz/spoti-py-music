@@ -47,8 +47,8 @@ class Song:
 
     def edit_metadata(self):
         """ Edit title, artist, and album art """
-        audiofile = eyed3.load('./songs/' + self.title + '.mp3')
+        audiofile = eyed3.load(f'./songs/{self.playlist}/{self.title}.mp3')
         audiofile.tag.artist = self.artist
         audiofile.tag.title = self.title
-        audiofile.tag.title = self.title
+        audiofile.tag.images.set(3, self.cover_art, 'image/jpeg', 'Cover art')
         audiofile.tag.save()
