@@ -1,2 +1,4 @@
 venv/*
 songs/*
+__pycache__/*
+secrets.py

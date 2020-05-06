@@ -8,9 +8,10 @@ from bs4 import BeautifulSoup
 class Song:
     """ Contains and controls song elements """
 
-    def __init__(self, title, artist):
+    def __init__(self, title, artist, cover_art):
         self.title = title
         self.artist = artist
+        self.cover_art = cover_art
 
     def download(self):
         """ Download mp3 from youtube """
