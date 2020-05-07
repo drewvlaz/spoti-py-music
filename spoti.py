@@ -8,7 +8,7 @@ def main():
         "Hot Rhythmic":'37i9dQZF1DWYs83FtTMQFw'
     }
 
-    selection = "Hot Rhythmic"
+    selection = "Just Good Music"
     pl = Playlist(selection, playlists[selection])
     pl.get_playlist()
     pl.download_songs()

@@ -67,5 +67,6 @@ class Song:
         audiofile = eyed3.load(f'./songs/{self.playlist}/{self.title}.mp3')
         audiofile.tag.artist = self.artist
         audiofile.tag.title = self.title
+        # TODO: Album art doesn't display right on phone
         audiofile.tag.images.set(3, self.cover_art, 'image/jpeg', 'Cover art')
         audiofile.tag.save()
