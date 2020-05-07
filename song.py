@@ -27,13 +27,18 @@ class Song:
         # Download song as mp3
         # Weird error sometimes can't find video to download
         successful_download = False
-        while not successful_download:
+        count = 0
+        while not successful_download and count < 5:
+            count += 1
             try:
                 # Locate download url
                 self.get_URL()
                 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([self.URL])
                     successful_download = True
+
+            except KeyboardInterrupt:
+                raise
 
             except:
                 print("Error in downloading...Retrying")
