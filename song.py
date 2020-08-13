@@ -1,7 +1,11 @@
+import json
+import re
+
 from bs4 import BeautifulSoup
 import youtube_dl
 import eyed3
 import requests
+
 
 class Song:
     """ Contains and controls song elements """
@@ -21,8 +25,8 @@ class Song:
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
-                }]
-            }
+            }]
+        }
 
         # Download song as mp3
         # Weird error sometimes can't find video to download
@@ -30,6 +34,7 @@ class Song:
         count = 0
         while not successful_download and count < 5:
             count += 1
+            self.get_URL()
             try:
                 # Locate download url
                 self.get_URL()
@@ -57,9 +62,10 @@ class Song:
 
         search_page = requests.get(query)
         soup = BeautifulSoup(search_page.text, 'html.parser')
-        link = soup.find('a', {'class': 'yt-uix-sessionlink spf-link'})
+        link = soup.find('body').find_all('script')[1]
+        link = re.search('videoId.{15}', str(link)).group()[10:21]
 
-        self.URL = 'https://www.youtube.com/' + link.get('href')
+        self.URL = 'https://www.youtube.com/watch?v=' + link
         successful_link = True
 
     def edit_metadata(self):
