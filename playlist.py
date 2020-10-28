@@ -3,6 +3,7 @@ from secrets import SPOTIFY_TOKEN
 import requests
 from song import Song
 
+
 class Playlist:
     """ Contains and controls playlist elements """
 
@@ -29,13 +30,15 @@ class Playlist:
     def download_songs(self):
         """ Download each song in the playlist """
         for i in range(len(self.data.json()['items'])):
-            if i > 50:
+            if i > 100:
                 break
 
             # Get song data
             title = self.data.json()['items'][i]['track']['name']
-            artist = self.data.json()['items'][i]['track']['album']['artists'][0]['name']
-            cover_art = requests.get(self.data.json()['items'][i]['track']['album']['images'][0]['url']).content
+            artist = self.data.json(
+            )['items'][i]['track']['album']['artists'][0]['name']
+            cover_art = requests.get(
+                self.data.json()['items'][i]['track']['album']['images'][0]['url']).content
 
             # Initialize song obj and download
             song = Song(title, artist, cover_art, self.name)
