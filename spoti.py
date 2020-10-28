@@ -12,7 +12,7 @@ def main():
         "2000s Throwbacks": '5tW8T4fK7DoTtLr8ordLpa'
     }
 
-    selection = ""
+    selection = "late nite"
     pl = Playlist(selection, playlists[selection])
     pl.get_playlist()
     pl.download_songs()
