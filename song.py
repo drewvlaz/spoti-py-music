@@ -1,10 +1,8 @@
-import json
 import re
 
-from bs4 import BeautifulSoup
+import requests
 import youtube_dl
 import eyed3
-import requests
 
 
 class Song:
@@ -30,14 +28,12 @@ class Song:
 
         # Download song as mp3
         # Weird error sometimes can't find video to download
+        self._get_URL()
         successful_download = False
         count = 0
         while not successful_download and count < 5:
             count += 1
-            self.get_URL()
             try:
-                # Locate download url
-                self.get_URL()
                 with youtube_dl.YoutubeDL(ydl_opts) as ydl:
                     ydl.download([self.URL])
                     successful_download = True
@@ -49,9 +45,9 @@ class Song:
                 print("Error in downloading...Retrying")
 
         # Automatically edit metadata
-        self.edit_metadata()
+        self._edit_metadata()
 
-    def get_URL(self):
+    def _get_URL(self):
         """ Locate youtube URL based on title and artist """
         query = 'https://www.youtube.com/results?search_query='
         for word in self.title.split(' '):
@@ -60,15 +56,16 @@ class Song:
             query += word + '+'
         query += 'lyrics'
 
-        search_page = requests.get(query)
-        soup = BeautifulSoup(search_page.text, 'html.parser')
-        link = soup.find('body').find_all('script')[1]
-        link = re.search('videoId.{15}', str(link)).group()[10:21]
+        try:
+            search_page = requests.get(query)
+            video_ids = re.findall(r"watch\?v=(\S{11})", search_page.text)
+            if video_ids:
+                self.URL = f"https://www.youtube.com/watch?v={video_ids[0]}"
 
-        self.URL = 'https://www.youtube.com/watch?v=' + link
-        successful_link = True
+        except Exception as e:
+            print(f"Exception in finding URL:{e}")
 
-    def edit_metadata(self):
+    def _edit_metadata(self):
         """ Edit title, artist, and album art """
         audiofile = eyed3.load(f'./songs/{self.playlist}/{self.title}.mp3')
         audiofile.tag.artist = self.artist

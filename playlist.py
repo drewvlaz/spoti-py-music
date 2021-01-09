@@ -1,8 +1,9 @@
-from secrets import SPOTIFY_TOKEN
-
-import requests
+from secrets import CLIENT_ID, CLIENT_SECRET
 from song import Song
 
+import requests
+import base64
+import json
 
 class Playlist:
     """ Contains and controls playlist elements """
@@ -10,6 +11,30 @@ class Playlist:
     def __init__(self, name, playlist_id):
         self.name = name
         self.id = playlist_id
+
+    def get_auth_token(self):
+        """ Get authorization token from client credentials """
+
+        url = 'https://accounts.spotify.com/api/token'
+
+        # Encode to base 64
+        # Refer to https://dev.to/mxdws/using-python-with-the-spotify-api-1d02
+        message = f"{CLIENT_ID}:{CLIENT_SECRET}"
+        messageBytes = message.encode('ascii')
+        base64Bytes = base64.b64encode(messageBytes)
+        base64Message = base64Bytes.decode('ascii')
+
+        r = requests.post(
+            url,
+            headers={
+                'Authorization': f'Basic {base64Message}'
+            },
+            data={
+                'grant_type': 'client_credentials'
+            }
+        )
+
+        return r.json()['access_token']
 
     def get_playlist(self):
         """ Get playlist data from spotify """
@@ -23,15 +48,21 @@ class Playlist:
             },
             headers={
                 'Content-Type': 'application/json',
-                'Authorization': f'Bearer {SPOTIFY_TOKEN}',
+                'Authorization': f'Bearer {self.get_auth_token()}',
             }
         )
 
+        # print(json.dumps(self.data.json(), indent=2))
+
     def download_songs(self):
         """ Download each song in the playlist """
-        for i in range(len(self.data.json()['items'])):
+        playlist_size = len(self.data.json()['items'])
+        for i in range(6,playlist_size):
             if i > 100:
                 break
+
+            # Show status
+            print(f"\nSong {i}/{playlist_size}")
 
             # Get song data
             title = self.data.json()['items'][i]['track']['name']
