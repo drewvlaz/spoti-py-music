@@ -4,7 +4,6 @@ import requests
 import youtube_dl
 import eyed3
 
-
 class Song:
     """ Contains and controls song elements """
 
